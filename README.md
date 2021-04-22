@@ -14,24 +14,22 @@ composer install command:
 <code>composer require nhrrob/crudgenerator</code>
 
 
-### Crud Generate Commands
-
-#### Install Crud:
+### Crud Generator Commands
 - install: <code>php artisan crud:generator</code>
 - Migration: Add title field and run migration
-   add field: <code>$table->string('title');</code>
-   run migration: <code>php artisan migrate</code>
-
-#### Delete Crud:
-- <code>php artisan crud:generator:delete</code>
-- Manually delete migration file and remove route from web.php
-
+   - add field: <code>$table->string('title');</code>
+   - run migration: <code>php artisan migrate</code>
 
 #### Note: 
 This package creates resource route.
 Example:
 - Model title: Post
 - Resource route: example.com/posts 
+
+#### Remove Crud:
+- <code>php artisan crud:generator:delete</code>
+- Manually delete migration file and remove route from web.php
+
 
 Feel free to contact: 
 <a href="https://www.nazmulrobin.com/">nazmulrobin.com</a> | <a href="https://twitter.com/nhr_rob">Twitter</a> | <a href="https://www.linkedin.com/in/nhrrob/">Linkedin</a> | <a href="mailto:robin.sust08@gmail.com">Email</a>
