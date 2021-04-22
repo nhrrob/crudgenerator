@@ -25,6 +25,7 @@ Example:
 - Model title: Post
 - Resource route: example.com/posts 
 
+## 
 #### Remove Crud:
 - <code>php artisan crud:generator:delete</code>
 - Manually delete migration file and remove route from web.php
