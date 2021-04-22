@@ -27,7 +27,7 @@ Example:
 - Resource route: example.com/posts 
 
 ## 
-#### Remove Crud:
+#### Remove Crud Generated Files:
 - <code>php artisan crud:generator:delete</code>
 - Manually delete migration file and remove route from web.php
 
