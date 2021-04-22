@@ -1,4 +1,4 @@
-# NHRROB Crud Generator Package
+## NHRROB Crud Generator Package
 
 <p align="left">
 <a href="https://github.com/nhrrob/crudgenerator/stargazers"><img src="https://img.shields.io/github/stars/nhrrob/crudgenerator?style=flat-square" alt="Stars"></a>
@@ -7,7 +7,7 @@
 <a href="https://github.com/nhrrob/crudgenerator/blob/master/LICENSE.md"><img alt="GitHub license" src="https://img.shields.io/github/license/nhrrob/crudgenerator"></a>
 </p>
 
-## This package provides an artisan command to generate a basic crud
+### This package provides an artisan command to generate a basic crud
 
 composer install command: 
 <code>composer require nhrrob/crudgenerator</code>
