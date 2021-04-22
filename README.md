@@ -7,6 +7,11 @@
 <a href="https://github.com/nhrrob/crudgenerator/blob/master/LICENSE.md"><img alt="GitHub license" src="https://img.shields.io/github/license/nhrrob/crudgenerator"></a>
 </p>
 
+<p align="center">
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/nhrrob/contact"><img src="https://img.shields.io/packagist/dt/nhrrob/contact" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/nhrrob/crudgenerator"><img src="https://img.shields.io/packagist/dt/nhrrob/crudgenerator" alt="Total Downloads"></a>
+</p>
 
 ## This package provides an artisan command to generate a basic crud
 
