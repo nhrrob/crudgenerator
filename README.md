@@ -12,6 +12,7 @@
 composer install command: 
 <code>composer require nhrrob/crudgenerator</code>
 
+## 
 
 ### Crud Generator Commands
 - install: <code>php artisan crud:generator</code>
