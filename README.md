@@ -39,6 +39,6 @@ Feel free to contact:
 ## 
 #### Bonus 
 Laravel 8 auth using laravel/ui:
-<code>composer require laravel/ui</code>
-<code>php artisan ui bootstrap —auth</code>
-<code>npm install & nom run dev</code>
+- <code>composer require laravel/ui</code>
+- <code>php artisan ui bootstrap —auth</code>
+- <code>npm install & nom run dev</code>
