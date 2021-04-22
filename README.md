@@ -17,22 +17,21 @@ composer install command:
 ### Crud Generate Commands
 
 #### Install Crud:
-Steps:
 - install: <code>php artisan crud:generator</code>
 - Migration: Add title field and run migration
    add field: <code>$table->string('title');</code>
    run migration: <code>php artisan migrate</code>
 
 #### Delete Crud:
-Steps:
 - <code>php artisan crud:generator:delete</code>
 - Manually delete migration file and remove route from web.php
 
 
 #### Note: 
-This package creates resource routes.
+This package creates resource route.
 Example:
 - Model title: Post
 - Resource route: example.com/posts 
 
-Feel free to contact: nazmulrobin.com; twitter: nhr_rob
+Feel free to contact: 
+<a href="nazmulrobin.com">nazmulrobin.com</a> | <a href="https://twitter.com/nhr_rob">Twitter</a> | <a href="https://www.linkedin.com/in/nhrrob/">Linkedin</a>
