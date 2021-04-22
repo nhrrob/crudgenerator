@@ -25,20 +25,20 @@
             </tr>
         </thead>
         <tbody>
-            @forelse(${{modelKebabPlural}} as ${{modelKebab}})
+            @forelse(${{modelCamelPlural}} as ${{modelCamel}})
             <tr>
                 <td>
-                    {{ ${{modelKebab}}->title ?? 'N/A' }}
+                    {{ ${{modelCamel}}->title ?? 'N/A' }}
                 </td>
 
                 <td>
-                    {{ optional(${{modelKebab}}->created_at)->diffForHumans() }}
+                    {{ optional(${{modelCamel}}->created_at)->diffForHumans() }}
                 </td>
 
                 <td>
-                    <a href='{{ route("{{modelKebabPlural}}.edit", ${{modelKebab}}->id) }}'><i class="fa fa-pencil"></i> Edit</a>
+                    <a href='{{ route("{{modelKebabPlural}}.edit", ${{modelCamel}}->id) }}'><i class="fa fa-pencil"></i> Edit</a>
                     
-                    <form method="POST" action="{{ route('{{modelKebabPlural}}.destroy', ${{modelKebab}}->id) }}">
+                    <form method="POST" action="{{ route('{{modelKebabPlural}}.destroy', ${{modelCamel}}->id) }}">
                         {{ csrf_field() }}
                         {{ method_field('DELETE') }}
 

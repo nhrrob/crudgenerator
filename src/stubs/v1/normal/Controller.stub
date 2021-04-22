@@ -10,7 +10,7 @@ class {{modelPascal}}Controller extends Controller
 {
     public function index()
     {
-        $data['{{modelSnakePlural}}'] = {{modelPascal}}::latest()->get();
+        $data['{{modelCamelPlural}}'] = {{modelPascal}}::latest()->get();
         return view('{{modelSnake}}.index', $data);
     }
 
@@ -29,7 +29,7 @@ class {{modelPascal}}Controller extends Controller
                 'alert-type' => 'success'
             );
 
-            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
 
         } catch (Exception $e) {
             $notification = array(
@@ -37,7 +37,7 @@ class {{modelPascal}}Controller extends Controller
                 'alert-type' => 'error'
             );
 
-            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
         }
     }
 
@@ -48,7 +48,7 @@ class {{modelPascal}}Controller extends Controller
 
     public function edit({{modelPascal}} ${{modelCamel}})
     {
-        $data['{{modelSnake}}'] = ${{modelSnake}};
+        $data['{{modelCamel}}'] = ${{modelCamel}};
         return view('{{modelSnake}}.edit', $data);
     }
 
@@ -62,13 +62,13 @@ class {{modelPascal}}Controller extends Controller
                 'alert-type' => 'success'
             );
 
-            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
         } catch (Exception $e) {
             $notification = array(
                 'message' => $e->getMessage(),
                 'alert-type' => 'error'
             );
-            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
         }
     }
 
@@ -82,13 +82,13 @@ class {{modelPascal}}Controller extends Controller
                 'alert-type' => 'success'
             );
 
-            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
         } catch (Exception $e) {
             $notification = array(
                 'message' => $e->getMessage(),
                 'alert-type' => 'error'
             );
-            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
         }
     }
 }
