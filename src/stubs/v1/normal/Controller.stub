@@ -1,0 +1,94 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\{{modelPascal}}Request;
+use App\{{modelPascal}};
+use Exception;
+
+class {{modelPascal}}Controller extends Controller
+{
+    public function index()
+    {
+        $data['{{modelSnakePlural}}'] = {{modelPascal}}::latest()->get();
+        return view('{{modelSnake}}.index', $data);
+    }
+
+    public function create()
+    {
+        return view('{{modelSnake}}.create');
+    }
+
+    public function store({{modelPascal}}Request $request)
+    {
+        try{
+            ${{modelCamel}} = {{modelPascal}}::create($request->all());
+
+            $notification = array(
+                'message' => '{{modelTitle}} saved successfully!',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+
+        } catch (Exception $e) {
+            $notification = array(
+                'message' => $e->getMessage(),
+                'alert-type' => 'error'
+            );
+
+            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+        }
+    }
+
+    public function show({{modelPascal}} ${{modelCamel}})
+    {
+        //
+    }
+
+    public function edit({{modelPascal}} ${{modelCamel}})
+    {
+        $data['{{modelSnake}}'] = ${{modelSnake}};
+        return view('{{modelSnake}}.edit', $data);
+    }
+
+    public function update({{modelPascal}}Request $request, {{modelPascal}} ${{modelCamel}})
+    {
+        try {
+            ${{modelCamel}} = ${{modelCamel}}->update($request->all());
+
+            $notification = array(
+                'message' => '{{modelTitle}} saved successfully!',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+        } catch (Exception $e) {
+            $notification = array(
+                'message' => $e->getMessage(),
+                'alert-type' => 'error'
+            );
+            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+        }
+    }
+
+    public function destroy({{modelPascal}} ${{modelCamel}})
+    {
+        try{
+            {{modelPascal}}::find(${{modelCamel}}->id)->delete();
+
+            $notification = array(
+                'message' => '{{modelTitle}} deleted successfully!',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+        } catch (Exception $e) {
+            $notification = array(
+                'message' => $e->getMessage(),
+                'alert-type' => 'error'
+            );
+            return redirect()->route('{{modelSnakePlural}}.index')->with($notification);
+        }
+    }
+}

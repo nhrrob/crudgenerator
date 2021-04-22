@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{modelTitle}}</title>
+</head>
+
+<body>
+
+    <p><a href='{{ route("{{modelKebabPlural}}.create") }}'><i class="fa fa-plus"></i> Create {{modelTitle}}</a></p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    Title
+                </th>
+                <th>
+                    Created
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse(${{modelKebabPlural}} as ${{modelKebab}})
+            <tr>
+                <td>
+                    {{ ${{modelKebab}}->title ?? 'N/A' }}
+                </td>
+
+                <td>
+                    {{ optional(${{modelKebab}}->created_at)->diffForHumans() }}
+                </td>
+
+                <td>
+                    <a href='{{ route("{{modelKebabPlural}}.edit", ${{modelKebab}}->id) }}'><i class="fa fa-pencil"></i> Edit</a>
+                    
+                    <form method="POST" action="{{ route('{{modelKebabPlural}}.destroy', ${{modelKebab}}->id) }}">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+
+                        <div class="form-group">
+                            <i class="fa fa-times"></i>
+                            <input type="submit" class="btn btn-danger" value="Delete">
+                        </div>
+                    </form>
+                    
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="3">No records found!</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+</body>
+
+</html>

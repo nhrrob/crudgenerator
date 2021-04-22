@@ -1,0 +1,26 @@
+{
+    "name": "nhrrob/crudgenerator",
+    "description": "This package provides an artisan command to generate a basic crud",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nazmul Hasan Robin",
+            "email": "robin.sust08@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Nhrrob\\Crudgenerator\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nhrrob\\Crudgenerator\\CrudgeneratorServiceProvider"
+            ]
+        }
+    }
+}
