@@ -31,5 +31,5 @@ Example:
 - Manually delete migration file and remove route from web.php
 
 
-Feel free to contact: 
+Feel free to contact:  
 <a href="https://www.nazmulrobin.com/">nazmulrobin.com</a> | <a href="https://twitter.com/nhr_rob">Twitter</a> | <a href="https://www.linkedin.com/in/nhrrob/">Linkedin</a> | <a href="mailto:robin.sust08@gmail.com">Email</a>
