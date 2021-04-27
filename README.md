@@ -43,6 +43,7 @@ Laravel 8 auth using laravel/ui:
 - <code>php artisan ui bootstrap —auth</code>
 - <code>npm install & nom run dev</code>
 
+## 
 
 #### Modify Stubs:
 - Publish vendor files <code>php artisan vendor:publish</code>
