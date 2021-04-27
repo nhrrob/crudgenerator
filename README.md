@@ -42,3 +42,24 @@ Laravel 8 auth using laravel/ui:
 - <code>composer require laravel/ui</code>
 - <code>php artisan ui bootstrap —auth</code>
 - <code>npm install & nom run dev</code>
+
+
+#### Modify Stubs:
+- Publish vendor files <code>php artisan vendor:publish</code>
+- To use published stub files we need to copy it to our vendor file; 
+  We can do that writing a script in our project composer. 
+  <code>
+  "scripts": {
+    "post-install-cmd": [
+        "@copyStubs"
+    ],
+    "post-update-cmd": [
+        "@copyStubs"
+    ],
+    "copyStubs": [
+        "cp resources/stubs/migration/* vendor/laravel/framework/src/Illuminate/Database/Migrations/stubs/"
+    ]
+  </code>
+  - To update vendor files run: <code>composer update</code> (or composer install)
+  - Now generate your crud (with your modified stub files): 
+   <code>php artisan crud:generator</code>
