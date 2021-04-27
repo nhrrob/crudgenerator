@@ -11,7 +11,7 @@ class CrudgeneratorServiceProvider extends ServiceProvider
 
     public function boot(){
         // $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
-        // $this->loadViewsFrom(__DIR__ . '/views', 'crudgenerator');
+        // $this->loadViewsFrom(__DIR__ . '/stubs', 'crudgenerator');
         // $this->loadMigrationsFrom(__DIR__ . '/database/migrations/');
 
         // $this->mergeConfigFrom(
@@ -19,10 +19,10 @@ class CrudgeneratorServiceProvider extends ServiceProvider
         //     'crudgenerator'
         // );
 
-        // $this->publishes([
-        //     __DIR__ . '/config/crudgenerator.php' => config_path('crudgenerator.php'),
-        //     __DIR__ . '/views' => resource_path('views/vendor/crudgenerator'),
-        // ]);
+        $this->publishes([
+            // __DIR__ . '/config/crudgenerator.php' => config_path('crudgenerator.php'),
+            // __DIR__ . '/stubs' => resource_path('views/vendor/crudgenerator'),
+        ]);
 
         // $this->publishes([
         //     __DIR__ . '/../config/crudgenerator.php' => config_path('crudgenerator.php'),
@@ -32,9 +32,9 @@ class CrudgeneratorServiceProvider extends ServiceProvider
         //     __DIR__ . '/../publish/views/' => base_path('resources/views/'),
         // ]);
 
-        // $this->publishes([
-        //     __DIR__ . '/stubs/' => base_path('resources/crud-generator/'),
-        // ]);
+        $this->publishes([
+            __DIR__ . '/stubs' => resource_path('stubs/vendor/crudgenerator/'),
+        ]);
     }
 
     public function register(){
