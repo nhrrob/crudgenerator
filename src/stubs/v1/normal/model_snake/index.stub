@@ -10,9 +10,9 @@
 
 <body>
 
-    <p><a href='{{ route("{{modelKebabPlural}}.create") }}'><i class="fa fa-plus"></i> Create {{modelTitle}}</a></p>
+    <p><a class="btn btn-success" href='{{ route("{{modelKebabPlural}}.create") }}'><i class="fa fa-plus"></i> Create {{modelTitle}}</a></p>
     
-    <table>
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>
@@ -21,7 +21,7 @@
                 <th>
                     Created
                 </th>
-                <th>Actions</th>
+                <th width="5%">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -36,7 +36,7 @@
                 </td>
 
                 <td>
-                    <a href='{{ route("{{modelKebabPlural}}.edit", ${{modelCamel}}->id) }}'><i class="fa fa-pencil"></i> Edit</a>
+                    <a class="btn btn-success d-block mb-2" href='{{ route("{{modelKebabPlural}}.edit", ${{modelCamel}}->id) }}'><i class="fa fa-pencil"></i> Edit</a>
                     
                     <form method="POST" action="{{ route('{{modelKebabPlural}}.destroy', ${{modelCamel}}->id) }}">
                         {{ csrf_field() }}
@@ -44,7 +44,7 @@
 
                         <div class="form-group">
                             <i class="fa fa-times"></i>
-                            <input type="submit" class="btn btn-danger" value="Delete">
+                            <input type="submit" class="btn btn-danger d-block" value="Delete">
                         </div>
                     </form>
                     
@@ -52,7 +52,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="3">No records found!</td>
+                <td colspan="3" align="center">No records found!</td>
             </tr>
             @endforelse
         </tbody>

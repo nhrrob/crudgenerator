@@ -12,19 +12,19 @@
     <div class="container">
         <h4>Create {{modelTitle}}</h4>
         <hr>
-        <form method="post" action='{{ route("{{modelKebabPlural}}.store") }}' enctype="multipart/form-data">
+        <form method="POST" action='{{ route("{{modelKebabPlural}}.store") }}' enctype="multipart/form-data">
             @csrf
             
-            <div>
-                <input type="text" name="title" placeholder="Title">
-                @error('name')
-                <label>{{ $message }}</label>
+            <div class="form-group">
+                <input class="form-control" type="text" name="title" placeholder="Title">
+                @error('title')
+                <label class="text-danger">{{ $message }}</label>
                 @enderror
             </div>
 
-            <div>
-                <a href='{{ route("{{modelKebabPlural}}.index") }}' type="submit">Cancel</a>
-                <button type="submit">Save</button>
+            <div class="form-group">
+                <a class="btn btn-danger mr-1" href='{{ route("{{modelKebabPlural}}.index") }}' type="submit">Cancel</a>
+                <button class="btn btn-success" type="submit">Save</button>
             </div>
         </form>
     </div>
