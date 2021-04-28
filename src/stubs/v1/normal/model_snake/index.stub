@@ -10,6 +10,12 @@
 
 <body>
 
+    @if (session('message'))
+        <div class="alert alert-success" role="alert">
+            {{ session('message') }}
+        </div>
+    @endif
+
     <p><a class="btn btn-success" href='{{ route("{{modelKebabPlural}}.create") }}'><i class="fa fa-plus"></i> Create {{modelTitle}}</a></p>
     
     <table class="table table-bordered">

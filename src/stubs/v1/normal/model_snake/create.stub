@@ -12,6 +12,13 @@
     <div class="container">
         <h4>Create {{modelTitle}}</h4>
         <hr>
+        
+        @if (session('message'))
+            <div class="alert alert-success" role="alert">
+                {{ session('message') }}
+            </div>
+        @endif
+        
         <form method="POST" action='{{ route("{{modelKebabPlural}}.store") }}' enctype="multipart/form-data">
             @csrf
             

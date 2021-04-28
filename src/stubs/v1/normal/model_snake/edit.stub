@@ -12,6 +12,13 @@
     <div class="container">
         <h4>Edit {{modelTitle}}</h4>
         <hr>
+
+        @if (session('message'))
+            <div class="alert alert-success" role="alert">
+                {{ session('message') }}
+            </div>
+        @endif
+        
         <form method="POST" action='{{ route("{{modelKebabPlural}}.update", ${{modelCamel}}->id) }}' enctype="multipart/form-data">
             @csrf
             @method('PUT')
