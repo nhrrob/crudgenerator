@@ -50,7 +50,7 @@ Laravel 8 auth using laravel/ui:
 - To use published stub files we need to copy it to our vendor file; 
   We can do that writing a script in our project composer. 
   ```
-  "scripts": {
+  scripts": {
     "post-install-cmd": [
         "@copyStubs"
     ],
@@ -58,8 +58,9 @@ Laravel 8 auth using laravel/ui:
         "@copyStubs"
     ],
     "copyStubs": [
-        "cp resources/stubs/migration/* vendor/laravel/framework/src/Illuminate/Database/Migrations/stubs/"
+        "cp -R resources/stubs/vendor/crudgenerator/* vendor/nhrrob/crudgenerator/src/stubs/"
     ]
+  }
   ``` 
   - To update vendor files run: <code>composer update</code> (or composer install)
   - Now generate your crud (with your modified stub files): 
