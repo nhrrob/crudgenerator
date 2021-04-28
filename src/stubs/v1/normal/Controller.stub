@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\{{modelPascal}}Request;
-use App\{{modelPascal}};
+use App{{modelFolder}}\{{modelPascal}};
 use Exception;
 
 class {{modelPascal}}Controller extends Controller

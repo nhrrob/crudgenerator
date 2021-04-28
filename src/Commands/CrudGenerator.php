@@ -44,6 +44,7 @@ class CrudGenerator extends Command
         $modelKebab, $modelKebabPlural, $modelSnake, $modelSnakePlural;
     protected $templateArr1, $templateArr2;
     protected $finder;
+    protected $modelFolder;
 
     public function __construct(Filesystem $finder)
     {
@@ -51,6 +52,7 @@ class CrudGenerator extends Command
         $this->version = 'v1'; //it may change but command should not change. conmmand should not contain v1 or etc
         $this->crudType = 'normal';
         $this->finder = $finder;
+        $this->modelFolder = app()->version() < 8 ? '' : '\Models'; 
     }
 
     /**
@@ -94,6 +96,7 @@ class CrudGenerator extends Command
             '{{modelKebabPlural}}',
             '{{modelSnake}}',
             '{{modelSnakePlural}}',
+            '{{modelFolder}}',
 
         ];
 
@@ -110,6 +113,7 @@ class CrudGenerator extends Command
             $this->modelKebabPlural,
             $this->modelSnake,
             $this->modelSnakePlural,
+            $this->modelFolder,
         ];
 
         $this->model();
