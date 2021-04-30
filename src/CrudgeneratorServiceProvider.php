@@ -39,8 +39,10 @@ class CrudgeneratorServiceProvider extends ServiceProvider
 
     public function register(){
         $this->commands(
+            [
             'Nhrrob\Crudgenerator\Commands\CrudGenerator',
             'Nhrrob\Crudgenerator\Commands\CrudGeneratorDelete',
+            ]
         );
     }
 }
