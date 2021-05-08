@@ -27,6 +27,10 @@ Example:
 - Resource route: example.com/posts 
 
 ## 
+#### Modify Stubs:
+- Publish vendor files <code>php artisan vendor:publish</code>
+
+## 
 #### Remove Crud Generated Files:
 - <code>php artisan crud:generator:delete</code>
 - Manually delete migration file and remove route from web.php
@@ -40,30 +44,6 @@ Feel free to contact:
 #### Bonus 
 Laravel 8 auth using laravel/ui:
 - <code>composer require laravel/ui</code>
-- <code>php artisan ui bootstrap</code>
 - <code>php artisan ui bootstrap --auth</code>
 - <code>npm install && npm run dev</code>
 - <code>php artisan migrate</code>
-
-## 
-
-#### Modify Stubs:
-- Publish vendor files <code>php artisan vendor:publish</code>
-- To use published stub files we need to copy it to our vendor file; 
-  We can do that writing a script in our project composer. 
-  ```
-  scripts": {
-    "post-install-cmd": [
-        "@copyStubs"
-    ],
-    "post-update-cmd": [
-        "@copyStubs"
-    ],
-    "copyStubs": [
-        "cp -R resources/stubs/vendor/crudgenerator/* vendor/nhrrob/crudgenerator/src/stubs/"
-    ]
-  }
-  ``` 
-  - To update vendor files run: <code>composer update</code> (or composer install)
-  - Now generate your crud (with your modified stub files): 
-   <code>php artisan crud:generator</code>
