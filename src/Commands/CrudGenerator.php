@@ -46,13 +46,15 @@ class CrudGenerator extends Command
     protected $finder;
     protected $modelFolder;
 
+    protected $viewDirectoryPath;
+
     public function __construct(Filesystem $finder)
     {
         parent::__construct();
         $this->version = 'v1'; //it may change but command should not change. conmmand should not contain v1 or etc
         $this->crudType = 'normal';
         $this->finder = $finder;
-        $this->modelFolder = app()->version() < 8 ? '' : '\Models'; 
+        $this->modelFolder = app()->version() < 8 ? '' : '\Models';
     }
 
     /**
@@ -138,7 +140,11 @@ class CrudGenerator extends Command
     {
         $parentFolder = $this->version . '/' . $this->crudType;
 
-        $path = __DIR__ . "/../stubs/$parentFolder/$folderName/$type.stub";
+        $this->viewDirectoryPath = File::exists(resource_path('stubs/vendor/crudgenerator/'))
+        ? resource_path('stubs/vendor/crudgenerator/')
+        : __DIR__ . '/../stubs/';
+
+        $path =  "{$this->viewDirectoryPath}$parentFolder/$folderName/$type.stub";
         return file_get_contents($path);
     }
 
@@ -204,7 +210,7 @@ class CrudGenerator extends Command
         $rtIndex = $this->dynamicGetStubRoot($folderName, 'index');
         $rtCreate = $this->dynamicGetStubRoot($folderName, 'create');
         $rtEdit = $this->dynamicGetStubRoot($folderName, 'edit');
-        
+
         //view/backend or admin folder : get it from config
         if (!file_exists($path = resource_path('views/' . strtolower($this->modelSnake))))
             mkdir($path, 0777, true);
@@ -214,11 +220,11 @@ class CrudGenerator extends Command
         $rtIndexPath = resource_path("views/{$modellower}/index.blade.php");
         $rtCreatePath = resource_path("views/{$modellower}/create.blade.php");
         $rtEditPath = resource_path("views/{$modellower}/edit.blade.php");
-        
+
         $this->validatePath($rtIndexPath);
         $this->validatePath($rtCreatePath);
         $this->validatePath($rtEditPath);
-        
+
         file_put_contents($rtIndexPath, $rtIndex);
         file_put_contents($rtCreatePath, $rtCreate);
         file_put_contents($rtEditPath, $rtEdit);
@@ -234,10 +240,10 @@ class CrudGenerator extends Command
     protected function route()
     {
         //route group : prefix: admin or backend : get it from config
-        
+
         //version check code : laravel 8 route needs whole controller path
         $controllerNamespace = app()->version() < 8 ? '' : "\\App\\Http\\Controllers\\";
-        
+
         $path_to_file  = base_path('routes/web.php');
         $append_route = "\n\n" . "Route::group(['middleware' => 'auth'], function () { \n  Route::resource('$this->modelKebabPlural', '{$controllerNamespace}{$this->modelPascal}Controller'); \n});";
 

@@ -15,24 +15,12 @@ class CrudgeneratorServiceProvider extends ServiceProvider
         // $this->loadMigrationsFrom(__DIR__ . '/database/migrations/');
 
         // $this->mergeConfigFrom(
-        //     __DIR__ . '/config/crudgenerator.php',
+        //     __DIR__ . '/../config/crudgenerator.php',
         //     'crudgenerator'
         // );
 
         $this->publishes([
-            // __DIR__ . '/config/crudgenerator.php' => config_path('crudgenerator.php'),
-            // __DIR__ . '/stubs' => resource_path('views/vendor/crudgenerator'),
-        ]);
-
-        // $this->publishes([
-        //     __DIR__ . '/../config/crudgenerator.php' => config_path('crudgenerator.php'),
-        // ]);
-
-        // $this->publishes([
-        //     __DIR__ . '/../publish/views/' => base_path('resources/views/'),
-        // ]);
-
-        $this->publishes([
+            // __DIR__ . '/../config/crudgenerator.php' => config_path('crudgenerator.php'),
             __DIR__ . '/stubs' => resource_path('stubs/vendor/crudgenerator/'),
         ]);
     }

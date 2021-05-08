@@ -15,7 +15,7 @@
             {{ session('message') }}
         </div>
     @endif
-
+    <p>From package</p>
     <p><a class="btn btn-success" href='{{ route("{{modelKebabPlural}}.create") }}'><i class="fa fa-plus"></i> Create {{modelTitle}}</a></p>
     
     <table class="table table-bordered">
