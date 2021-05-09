@@ -46,7 +46,7 @@ class CrudGenerator extends Command
     protected $finder;
     protected $modelFolder;
 
-    protected $viewDirectoryPath;
+    protected $stubDirectoryPath;
 
     public function __construct(Filesystem $finder)
     {
@@ -55,6 +55,9 @@ class CrudGenerator extends Command
         $this->crudType = 'normal';
         $this->finder = $finder;
         $this->modelFolder = app()->version() < 8 ? '' : '\Models';
+        $this->stubDirectoryPath = File::exists(resource_path('stubs/vendor/crudgenerator/'))
+        ? resource_path('stubs/vendor/crudgenerator/')
+        : __DIR__ . '/../stubs/';
     }
 
     /**
@@ -132,7 +135,7 @@ class CrudGenerator extends Command
     {
         $parentFolder = $this->version . '/' . $this->crudType;
 
-        $path = __DIR__ . "/../stubs/$parentFolder/$type.stub";
+        $path = "{$this->stubDirectoryPath}$parentFolder/$type.stub";
         return file_get_contents($path);
     }
 
@@ -140,11 +143,7 @@ class CrudGenerator extends Command
     {
         $parentFolder = $this->version . '/' . $this->crudType;
 
-        $this->viewDirectoryPath = File::exists(resource_path('stubs/vendor/crudgenerator/'))
-        ? resource_path('stubs/vendor/crudgenerator/')
-        : __DIR__ . '/../stubs/';
-
-        $path =  "{$this->viewDirectoryPath}$parentFolder/$folderName/$type.stub";
+        $path =  "{$this->stubDirectoryPath}$parentFolder/$folderName/$type.stub";
         return file_get_contents($path);
     }
 
