@@ -47,3 +47,13 @@ Laravel 8 auth using laravel/ui:
 - <code>php artisan ui bootstrap --auth</code>
 - <code>npm install && npm run dev</code>
 - <code>php artisan migrate</code>
+
+
+## 
+#### Bonus : API 
+API Helpline:
+- <code>https://github.com/nhrrob/laravelwiki</code>
+- <code>After refreshing database re create personal access token for passport</code>
+```
+php artisan passport:install
+```

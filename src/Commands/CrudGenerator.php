@@ -127,14 +127,20 @@ class CrudGenerator extends Command
         $this->view();
         $this->migration();
         $this->route();
+        
+        //Api
+        $this->apiResource();
+        $this->apiController();
+        $this->apiRoute();
 
-        $this->info('CRUD successfully generated.Cheers!');
+        $this->info('CRUD successfully generated. Cheers!');
     }
 
-    protected function getStub($type)
+    protected function getStub($type, $isApi=0)
     {
-        $parentFolder = $this->version . '/' . $this->crudType;
-
+        $apiFolder = $isApi ? '/Api' : '';
+        $parentFolder = $this->version . '/' . $this->crudType. $apiFolder;
+        
         $path = "{$this->stubDirectoryPath}$parentFolder/$type.stub";
         return file_get_contents($path);
     }
@@ -271,4 +277,69 @@ class CrudGenerator extends Command
         );
         return $rtIndex;
     }
+
+    //API Starts
+    protected function apiResource()
+    {
+        $requestTemplate = str_replace(
+            $this->templateArr1,
+            $this->templateArr2,
+            $this->getStub('Resource', 1)
+        );
+
+        if (!file_exists($path = app_path('/Http/Resources')))
+            mkdir($path, 0777, true);
+
+        $resourcePath = app_path("/Http/Resources/{$this->modelPascal}Resource.php");
+        $this->validatePath($resourcePath);
+
+        file_put_contents($resourcePath, $requestTemplate);
+        $this->info('Api: Resource generated!');
+    }
+
+    protected function apiController()
+    {
+        $controllerTemplate = str_replace(
+            $this->templateArr1,
+            $this->templateArr2,
+            $this->getStub('Controller',1)
+        );
+
+        $authControllerTemplate = str_replace(
+            $this->templateArr1,
+            $this->templateArr2,
+            $this->getStub('AuthController',1)
+        );
+
+        $controllerPath = app_path("/Http/Controllers/Api/{$this->modelPascal}Controller.php");
+        $this->validatePath($controllerPath);
+        file_put_contents($controllerPath, $controllerTemplate);
+        $this->info('Api: Controller generated!');
+
+        
+        
+        $authControllerPath = app_path("/Http/Controllers/Api/AuthController.php");
+
+        if ($this->finder->exists($authControllerPath) === false) {
+            file_put_contents($authControllerPath, $authControllerTemplate);
+            $this->info('Api: AuthController generated!');
+        }
+
+        $this->info('Note: Laravel Passport configuration => https://github.com/nhrrob/laravelwiki');
+        $this->info('Note: Api auth routes => Browse above link');
+        
+    } 
+
+    protected function apiRoute()
+    {
+        $controllerNamespace = app()->version() < 8 ? '' : "\\App\\Http\\Controllers\\Api\\";
+
+        $path_to_file  = base_path('routes/api.php');
+        $append_route = "\n\n" . "Route::group(['middleware' => ['auth:api']], function () { \n  Route::get('/{$this->modelKebabPlural}/search/{title}', '{$controllerNamespace}{$this->modelPascal}Controller@search'); \n  Route::apiResource('$this->modelKebabPlural', '{$controllerNamespace}{$this->modelPascal}Controller'); \n});";
+        File::append($path_to_file, $append_route);
+
+        $this->info('Route generated!');
+    }
+
+    //Api Ends
 }

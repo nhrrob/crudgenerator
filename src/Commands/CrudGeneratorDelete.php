@@ -125,6 +125,11 @@ class CrudGeneratorDelete extends Command
         $this->requestDelete();
         $this->viewDelete();
 
+        //Api
+        $this->apiResourceDelete();
+        $this->apiControllerDelete();
+
+
         $this->info('CRUD files successfully deleted. No worries!');
         $this->info('Do not forget to delete your routes and migration file!');
     }
@@ -189,5 +194,22 @@ class CrudGeneratorDelete extends Command
             return;
         }
         return;
+    }
+
+    //Api
+    protected function apiResourceDelete()
+    {
+        $path = app_path("/Http/Resources/{$this->modelPascal}Resource.php");
+
+        $this->validatePath($path);
+        $this->finder->delete($path);
+    }
+
+    protected function apiControllerDelete()
+    {
+        $path = app_path("/Http/Controllers/Api/{$this->modelPascal}Controller.php");
+
+        $this->validatePath($path);
+        $this->finder->delete($path);
     }
 }

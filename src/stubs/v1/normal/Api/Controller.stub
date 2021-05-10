@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App{{modelFolder}}\{{modelPascal}};
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\{{modelPascal}}Resource;
+
+class {{modelPascal}}Controller extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        ${{modelCamelPlural}} = {{modelPascal}}::latest()->paginate(10);
+        return {{modelPascal}}Resource::collection(${{modelCamelPlural}});
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+            'title' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response(['error' => $validator->errors(), 'Validation Error']);
+        }
+
+        ${{modelCamel}} = {{modelPascal}}::create($data);
+        return new {{modelPascal}}Resource(${{modelCamel}});
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\{{modelPascal}}  ${{modelCamel}}
+     * @return \Illuminate\Http\Response
+     */
+    public function show({{modelPascal}} ${{modelCamel}})
+    {
+        return new {{modelPascal}}Resource(${{modelCamel}});
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\{{modelPascal}}  ${{modelCamel}}
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, {{modelPascal}} ${{modelCamel}})
+    {
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+            'title' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response(['error' => $validator->errors(), 'Validation Error']);
+        }
+
+        ${{modelCamel}}->update($request->all());
+        return new {{modelPascal}}Resource(${{modelCamel}});
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\{{modelPascal}}  ${{modelCamel}}
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy({{modelPascal}} ${{modelCamel}})
+    {
+        ${{modelCamel}}->delete();
+        return new {{modelPascal}}Resource(${{modelCamel}});
+    }
+
+    /**
+     * Search for a name
+     *
+     * @param  str  $name
+     * @return \Illuminate\Http\Response
+     */
+    public function search($title)
+    {
+        ${{modelCamelPlural}} = {{modelPascal}}::where('title', 'like', '%'.$title.'%')->get();
+        return {{modelPascal}}Resource::collection(${{modelCamelPlural}});
+    }
+}
