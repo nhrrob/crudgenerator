@@ -311,12 +311,14 @@ class CrudGenerator extends Command
             $this->getStub('AuthController',1)
         );
 
+        if (!file_exists($path = app_path('/Http/Controllers/Api')))
+            mkdir($path, 0777, true);
+
         $controllerPath = app_path("/Http/Controllers/Api/{$this->modelPascal}Controller.php");
         $this->validatePath($controllerPath);
         file_put_contents($controllerPath, $controllerTemplate);
         $this->info('Api: Controller generated!');
 
-        
         
         $authControllerPath = app_path("/Http/Controllers/Api/AuthController.php");
 
