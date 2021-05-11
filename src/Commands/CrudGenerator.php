@@ -334,7 +334,8 @@ class CrudGenerator extends Command
 
     protected function apiRoute()
     {
-        $controllerNamespace = app()->version() < 8 ? '' : "\\App\\Http\\Controllers\\Api\\";
+        // $controllerNamespace = app()->version() < 8 ? '' : "\\App\\Http\\Controllers\\Api\\";
+        $controllerNamespace = "\\App\\Http\\Controllers\\Api\\"; //As Extra folder (Api) needed to add in namespace
 
         $path_to_file  = base_path('routes/api.php');
         $append_route = "\n\n" . "Route::group(['middleware' => ['auth:api']], function () { \n  Route::get('/{$this->modelKebabPlural}/search/{title}', '{$controllerNamespace}{$this->modelPascal}Controller@search'); \n  Route::apiResource('$this->modelKebabPlural', '{$controllerNamespace}{$this->modelPascal}Controller'); \n});";
