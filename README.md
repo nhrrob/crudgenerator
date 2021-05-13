@@ -53,14 +53,26 @@ php artisan crud:generator --admin
 ## 
 
 #### Modify Stubs:
-- Publish vendor files <code>php artisan vendor:publish</code>
+- Publish vendor files 
+```
+php artisan vendor:publish
+```
 
 ## 
 
 #### Remove Crud Generated Files:
-- <code>php artisan crud:generator:delete</code>
+- 
+```
+php artisan crud:generator:delete
+```
+- If you have generated crud under Admin folder:
+```
+php artisan crud:generator:delete --admin
+```
+
 - Manually delete migration file and remove route from web.php
 
+<br>
 
 Feel free to contact:  
 <a href="https://www.nazmulrobin.com/">nazmulrobin.com</a> | <a href="https://twitter.com/nhr_rob">Twitter</a> | <a href="https://www.linkedin.com/in/nhrrob/">Linkedin</a> | <a href="mailto:robin.sust08@gmail.com">Email</a>
@@ -70,13 +82,16 @@ Feel free to contact:
 
 #### Bonus 
 Laravel 8 auth using laravel/ui:
-- <code>composer require laravel/ui</code>
-- <code>php artisan ui bootstrap --auth</code>
-- <code>npm install && npm run dev</code>
-- <code>php artisan migrate</code>
-
+- 
+```
+composer require laravel/ui
+php artisan ui bootstrap --auth
+npm install && npm run dev
+php artisan migrate
+``` 
 
 ## 
+
 
 #### Bonus : API 
 API Helpline:
