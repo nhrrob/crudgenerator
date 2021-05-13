@@ -21,7 +21,9 @@ class CrudGeneratorDelete extends Command
     //                         {name? : Class (singular) for example User}
     //                         {--type=both : Institute type for example uni or non_uni or both}';
 
-    protected $signature = 'crud:generator:delete';
+    protected $signature = 'crud:generator:delete
+                            {--admin : If you want to delete a admin crud which has parent directory (Controllers and views) and prefix (routes) }
+                            ';
 
 
     /**
@@ -39,6 +41,8 @@ class CrudGeneratorDelete extends Command
     protected $version;
     protected $crudType;
     protected $name;
+    protected $adminCrud, $adminNamespace, $adminFolder;
+
     protected $parent;
     protected $child;
     protected $modelTitle, $modelTitlePlural, $modelTitleLower, $modelTitleLowerPlural,
@@ -72,6 +76,10 @@ class CrudGeneratorDelete extends Command
 
         //Generate Variables
         $this->modelTitle = $this->name;
+        $this->adminCrud = $this->option('admin');
+        $this->adminNamespace = $this->adminCrud ? '\Admin' : ''; //For namespace
+        $this->adminFolder = $this->adminCrud ? '/Admin' : '';  //For path
+
         $this->modelTitlePlural = Str::plural($this->name);
         $this->modelTitleLower = Str::of($this->name)->lower();
         $this->modelTitleLowerPlural = Str::of($this->name)->lower()->plural();
@@ -120,15 +128,20 @@ class CrudGeneratorDelete extends Command
             return;
         }
 
-        $this->modelDelete();
+        if ($this->confirm("Do you want to delete model, request and resource file as well") === false) {
+            $this->info('Model, request and resource files are not deleted!');
+        }else {
+            //Admin and front common files: model, request, resource 
+            $this->modelDelete();
+            $this->requestDelete();
+            $this->apiResourceDelete();
+        }
+
         $this->controllerDelete();
-        $this->requestDelete();
         $this->viewDelete();
 
         //Api
-        $this->apiResourceDelete();
         $this->apiControllerDelete();
-
 
         $this->info('CRUD files successfully deleted. No worries!');
         $this->info('Do not forget to delete your routes and migration file!');
@@ -139,14 +152,14 @@ class CrudGeneratorDelete extends Command
         //Version Check Code
         $modelFolder = app()->version() < 8 ? '' : '/Models'; //laravel 8 uses Models folder
         $path = app_path("$modelFolder/{$this->modelPascal}.php");
-
+        
         $this->validatePath($path);
         $this->finder->delete($path);
     }
 
     protected function controllerDelete()
     {
-        $path = app_path("/Http/Controllers/{$this->modelPascal}Controller.php");
+        $path = app_path("/Http/Controllers{$this->adminFolder}/{$this->modelPascal}Controller.php");
 
         $this->validatePath($path);
         $this->finder->delete($path);
@@ -162,8 +175,10 @@ class CrudGeneratorDelete extends Command
 
     protected function viewDelete()
     {
+        $modelSnakeParent = $this->adminCrud ? '/admin' : '';
+
         $modellower = strtolower($this->modelSnake);
-        $path = resource_path("views/{$modellower}"); //view/backend or admin folder: get it from config
+        $path = resource_path("views{$modelSnakeParent}/{$modellower}"); //view/backend or admin folder: get it from config
 
         $this->validatePath($path);
         $this->finder->deleteDirectory($path);
@@ -207,7 +222,7 @@ class CrudGeneratorDelete extends Command
 
     protected function apiControllerDelete()
     {
-        $path = app_path("/Http/Controllers/Api/{$this->modelPascal}Controller.php");
+        $path = app_path("/Http/Controllers/Api{$this->adminFolder}/{$this->modelPascal}Controller.php");
 
         $this->validatePath($path);
         $this->finder->delete($path);

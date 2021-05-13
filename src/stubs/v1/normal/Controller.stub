@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers{{adminNamespace}};
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\{{modelPascal}}Request;
 use App{{modelFolder}}\{{modelPascal}};
 use Exception;
@@ -11,12 +12,12 @@ class {{modelPascal}}Controller extends Controller
     public function index()
     {
         $data['{{modelCamelPlural}}'] = {{modelPascal}}::latest()->get();
-        return view('{{modelSnake}}.index', $data);
+        return view('{{adminRoutePrefix}}{{modelSnake}}.index', $data);
     }
 
     public function create()
     {
-        return view('{{modelSnake}}.create');
+        return view('{{adminRoutePrefix}}{{modelSnake}}.create');
     }
 
     public function store({{modelPascal}}Request $request)
@@ -29,7 +30,7 @@ class {{modelPascal}}Controller extends Controller
                 'alert-type' => 'success'
             );
 
-            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
+            return redirect()->route('{{adminRoutePrefix}}{{modelKebabPlural}}.index')->with($notification);
 
         } catch (Exception $e) {
             $notification = array(
@@ -37,7 +38,7 @@ class {{modelPascal}}Controller extends Controller
                 'alert-type' => 'error'
             );
 
-            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
+            return redirect()->route('{{adminRoutePrefix}}{{modelKebabPlural}}.index')->with($notification);
         }
     }
 
@@ -49,7 +50,7 @@ class {{modelPascal}}Controller extends Controller
     public function edit({{modelPascal}} ${{modelCamel}})
     {
         $data['{{modelCamel}}'] = ${{modelCamel}};
-        return view('{{modelSnake}}.edit', $data);
+        return view('{{adminRoutePrefix}}{{modelSnake}}.edit', $data);
     }
 
     public function update({{modelPascal}}Request $request, {{modelPascal}} ${{modelCamel}})
@@ -62,13 +63,13 @@ class {{modelPascal}}Controller extends Controller
                 'alert-type' => 'success'
             );
 
-            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
+            return redirect()->route('{{adminRoutePrefix}}{{modelKebabPlural}}.index')->with($notification);
         } catch (Exception $e) {
             $notification = array(
                 'message' => $e->getMessage(),
                 'alert-type' => 'error'
             );
-            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
+            return redirect()->route('{{adminRoutePrefix}}{{modelKebabPlural}}.index')->with($notification);
         }
     }
 
@@ -82,13 +83,13 @@ class {{modelPascal}}Controller extends Controller
                 'alert-type' => 'success'
             );
 
-            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
+            return redirect()->route('{{adminRoutePrefix}}{{modelKebabPlural}}.index')->with($notification);
         } catch (Exception $e) {
             $notification = array(
                 'message' => $e->getMessage(),
                 'alert-type' => 'error'
             );
-            return redirect()->route('{{modelKebabPlural}}.index')->with($notification);
+            return redirect()->route('{{adminRoutePrefix}}{{modelKebabPlural}}.index')->with($notification);
         }
     }
 }

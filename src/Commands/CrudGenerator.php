@@ -3,6 +3,7 @@
 namespace Nhrrob\Crudgenerator\Commands;
 
 use App\Http\Traits\AllTraits;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
@@ -21,7 +22,9 @@ class CrudGenerator extends Command
     //                         {name? : Class (singular) for example User}
     //                         {--type=both : Institute type for example uni or non_uni or both}';
 
-    protected $signature = 'crud:generator';
+    protected $signature = 'crud:generator
+                            {--admin : If you want to add a parent directory (Controllers and views) and prefix (routes) for admin panel cruds}
+                            ';
 
 
     /**
@@ -39,6 +42,7 @@ class CrudGenerator extends Command
     protected $version;
     protected $crudType;
     protected $name;
+    protected $adminCrud, $adminNamespace, $adminFolder, $adminPrefix, $adminRoutePrefix;
     protected $modelTitle, $modelTitlePlural, $modelTitleLower, $modelTitleLowerPlural,
         $modelCamel, $modelCamelPlural, $modelPascal, $modelPascalPlural,
         $modelKebab, $modelKebabPlural, $modelSnake, $modelSnakePlural;
@@ -76,6 +80,12 @@ class CrudGenerator extends Command
 
         //Generate Variables
         $this->modelTitle = $this->name;
+        $this->adminCrud = $this->option('admin');
+        $this->adminNamespace = $this->adminCrud ? '\Admin' : ''; //For namespace
+        $this->adminFolder = $this->adminCrud ? '/Admin' : '';  //For path
+        $this->adminPrefix = $this->adminCrud ? 'admin' : '';  //For view name; also for blade files
+        $this->adminRoutePrefix = $this->adminCrud ? 'admin.' : ''; 
+        
         $this->modelTitlePlural = Str::plural($this->name);
         $this->modelTitleLower = Str::of($this->name)->lower();
         $this->modelTitleLowerPlural = Str::of($this->name)->lower()->plural();
@@ -102,6 +112,9 @@ class CrudGenerator extends Command
             '{{modelSnake}}',
             '{{modelSnakePlural}}',
             '{{modelFolder}}',
+            '{{adminNamespace}}',
+            '{{adminPrefix}}',
+            '{{adminRoutePrefix}}',
 
         ];
 
@@ -119,24 +132,29 @@ class CrudGenerator extends Command
             $this->modelSnake,
             $this->modelSnakePlural,
             $this->modelFolder,
+            $this->adminNamespace,
+            $this->adminPrefix,
+            $this->adminRoutePrefix,
         ];
 
         $this->model();
         $this->controller();
         $this->request();
         $this->view();
-        $this->migration();
         $this->route();
+        $this->migration();
         
         //Api
         $this->apiResource();
         $this->apiController();
         $this->apiRoute();
 
+
+
         $this->info('CRUD successfully generated. Cheers!');
     }
 
-    protected function getStub($type, $isApi=0)
+    protected function getStub($type, $isApi=0, $isApiAuthController = 0)
     {
         $apiFolder = $isApi ? '/Api' : '';
         $parentFolder = $this->version . '/' . $this->crudType. $apiFolder;
@@ -180,8 +198,11 @@ class CrudGenerator extends Command
             $this->templateArr2,
             $this->getStub('Controller')
         );
+        
+        if (!file_exists($path = app_path("/Http/Controllers{$this->adminFolder}")))
+            mkdir($path, 0777, true);
 
-        $controllerPath = app_path("/Http/Controllers/{$this->modelPascal}Controller.php");
+        $controllerPath = app_path("/Http/Controllers{$this->adminFolder}/{$this->modelPascal}Controller.php");
         $this->validatePath($controllerPath);
 
         file_put_contents($controllerPath, $controllerTemplate);
@@ -217,14 +238,16 @@ class CrudGenerator extends Command
         $rtEdit = $this->dynamicGetStubRoot($folderName, 'edit');
 
         //view/backend or admin folder : get it from config
-        if (!file_exists($path = resource_path('views/' . strtolower($this->modelSnake))))
+        $modelSnakeParent = $this->adminCrud ? '/admin' : '';
+
+        if (!file_exists($path = resource_path("views{$modelSnakeParent}/" . strtolower($this->modelSnake))))
             mkdir($path, 0777, true);
 
         $modellower = strtolower($this->modelSnake);
 
-        $rtIndexPath = resource_path("views/{$modellower}/index.blade.php");
-        $rtCreatePath = resource_path("views/{$modellower}/create.blade.php");
-        $rtEditPath = resource_path("views/{$modellower}/edit.blade.php");
+        $rtIndexPath = resource_path("views{$modelSnakeParent}/{$modellower}/index.blade.php");
+        $rtCreatePath = resource_path("views{$modelSnakeParent}/{$modellower}/create.blade.php");
+        $rtEditPath = resource_path("views{$modelSnakeParent}/{$modellower}/edit.blade.php");
 
         $this->validatePath($rtIndexPath);
         $this->validatePath($rtCreatePath);
@@ -238,8 +261,11 @@ class CrudGenerator extends Command
 
     protected function migration()
     {
-        Artisan::call('make:migration create_' . strtolower(Str::plural($this->modelSnake)) . '_table --create=' . strtolower(Str::plural($this->modelSnake)));
-        $this->info('Migration generated!');
+        try{
+            Artisan::call('make:migration create_' . strtolower(Str::plural($this->modelSnake)) . '_table --create=' . strtolower(Str::plural($this->modelSnake)));
+        }catch(Exception $e){
+            $this->info($e->getMessage());
+        }
     }
 
     protected function route()
@@ -247,10 +273,13 @@ class CrudGenerator extends Command
         //route group : prefix: admin or backend : get it from config
 
         //version check code : laravel 8 route needs whole controller path
-        $controllerNamespace = app()->version() < 8 ? '' : "\\App\\Http\\Controllers\\";
+        $adminFolderRoute = $this->adminCrud ? '\Admin' : '';
+        $controllerNamespace = app()->version() < 8 ? '' : "\App\Http\Controllers{$adminFolderRoute}";
+
+        $adminRouteGroupParams = "'namespace'=> '$controllerNamespace', 'prefix' => '{$this->adminPrefix}',  'as'=>'{$this->adminRoutePrefix}',";
 
         $path_to_file  = base_path('routes/web.php');
-        $append_route = "\n\n" . "Route::group(['middleware' => 'auth'], function () { \n  Route::resource('$this->modelKebabPlural', '{$controllerNamespace}{$this->modelPascal}Controller'); \n});";
+        $append_route = "\n\n" . "Route::group([ {$adminRouteGroupParams} 'middleware' => 'auth' ], function () { \n  Route::resource('$this->modelKebabPlural', '{$this->modelPascal}Controller'); \n});";
 
         File::append($path_to_file, $append_route);
 
@@ -302,19 +331,19 @@ class CrudGenerator extends Command
         $controllerTemplate = str_replace(
             $this->templateArr1,
             $this->templateArr2,
-            $this->getStub('Controller',1)
+            $this->getStub('Controller', 1)
         );
 
         $authControllerTemplate = str_replace(
             $this->templateArr1,
             $this->templateArr2,
-            $this->getStub('AuthController',1)
+            $this->getStub('AuthController', 1, 1)
         );
 
-        if (!file_exists($path = app_path('/Http/Controllers/Api')))
+        if (!file_exists($path = app_path("/Http/Controllers/Api{$this->adminFolder}")))
             mkdir($path, 0777, true);
 
-        $controllerPath = app_path("/Http/Controllers/Api/{$this->modelPascal}Controller.php");
+        $controllerPath = app_path("/Http/Controllers/Api{$this->adminFolder}/{$this->modelPascal}Controller.php");
         $this->validatePath($controllerPath);
         file_put_contents($controllerPath, $controllerTemplate);
         $this->info('Api: Controller generated!');
@@ -334,14 +363,16 @@ class CrudGenerator extends Command
 
     protected function apiRoute()
     {
-        // $controllerNamespace = app()->version() < 8 ? '' : "\\App\\Http\\Controllers\\Api\\";
-        $controllerNamespace = "\\App\\Http\\Controllers\\Api\\"; //As Extra folder (Api) needed to add in namespace
+        $adminFolderRoute = $this->adminCrud ? '\Admin' : '';
+        $controllerNamespace = app()->version() < 8 ? '' : "\App\Http\Controllers\Api{$adminFolderRoute}";
+
+        $adminRouteGroupParams = "'namespace'=> '$controllerNamespace', 'prefix' => '{$this->adminPrefix}',  'as'=>'{$this->adminRoutePrefix}',";
 
         $path_to_file  = base_path('routes/api.php');
-        $append_route = "\n\n" . "Route::group(['middleware' => ['auth:api']], function () { \n  Route::get('/{$this->modelKebabPlural}/search/{title}', '{$controllerNamespace}{$this->modelPascal}Controller@search'); \n  Route::apiResource('$this->modelKebabPlural', '{$controllerNamespace}{$this->modelPascal}Controller'); \n});";
+        $append_route = "\n\n" . "Route::group([ {$adminRouteGroupParams} 'middleware' => ['auth:api']], function () { \n  Route::get('/{$this->modelKebabPlural}/search/{title}', '{$this->modelPascal}Controller@search')->name('{$this->modelKebabPlural}.search'); \n  Route::apiResource('$this->modelKebabPlural', '{$this->modelPascal}Controller'); \n});";
         File::append($path_to_file, $append_route);
 
-        $this->info('Route generated!');
+        $this->info('Api: Route generated!');
     }
 
     //Api Ends

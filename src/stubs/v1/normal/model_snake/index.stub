@@ -16,7 +16,7 @@
         </div>
     @endif
     
-    <p><a class="btn btn-success" href='{{ route("{{modelKebabPlural}}.create") }}'><i class="fa fa-plus"></i> Create {{modelTitle}}</a></p>
+    <p><a class="btn btn-success" href='{{ route("{{adminRoutePrefix}}{{modelKebabPlural}}.create") }}'><i class="fa fa-plus"></i> Create {{modelTitle}}</a></p>
     
     <table class="table table-bordered">
         <thead>
@@ -42,9 +42,9 @@
                 </td>
 
                 <td>
-                    <a class="btn btn-success d-block mb-2" href='{{ route("{{modelKebabPlural}}.edit", ${{modelCamel}}->id) }}'><i class="fa fa-pencil"></i> Edit</a>
+                    <a class="btn btn-success d-block mb-2" href='{{ route("{{adminRoutePrefix}}{{modelKebabPlural}}.edit", ${{modelCamel}}->id) }}'><i class="fa fa-pencil"></i> Edit</a>
                     
-                    <form method="POST" action="{{ route('{{modelKebabPlural}}.destroy', ${{modelCamel}}->id) }}">
+                    <form method="POST" action="{{ route('{{adminRoutePrefix}}{{modelKebabPlural}}.destroy', ${{modelCamel}}->id) }}">
                         {{ csrf_field() }}
                         {{ method_field('DELETE') }}
 
