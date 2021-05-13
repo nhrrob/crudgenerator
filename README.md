@@ -61,7 +61,7 @@ php artisan vendor:publish
 ## 
 
 #### Remove Crud Generated Files:
-- 
+- Delete Crud
 ```
 php artisan crud:generator:delete
 ```
