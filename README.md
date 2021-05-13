@@ -37,8 +37,7 @@ php artisan crud:generator --admin
    ```
    php artisan migrate
    ```
-
-<br>
+   
 
 #### Note: 
 - This package creates resource route.
