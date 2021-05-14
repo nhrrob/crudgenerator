@@ -49,6 +49,14 @@ php artisan crud:generator --admin
 - If you want to use Api, make sure Passport is installed.
    <br>Link: <a href="https://github.com/nhrrob/laravelwiki">https://github.com/nhrrob/laravelwiki</a> 
 
+## 
+
+#### Loom Videos: 
+- Laravel 8 project installation with auth: 
+<br>https://www.loom.com/share/681f186c6f61490f8e2df97cfc86afdd 
+
+- Laravel Crud using nhrrob/crudgenerator: 
+<br>https://www.loom.com/share/b860fb8c3ad2406fbd8661f2946f5cd7 
 
 ## 
 
