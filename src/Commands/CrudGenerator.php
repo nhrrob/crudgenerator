@@ -184,9 +184,12 @@ class CrudGenerator extends Command
         $modelFolder = app()->version() < 8 ? '' : '/Models'; //laravel 8 uses Models folder
 
         $modelPath = app_path("$modelFolder/{$this->modelPascal}.php");
-        $this->validatePath($modelPath);
+        $isValid = $this->validatePath($modelPath);
 
-        file_put_contents($modelPath, $modelTemplate);
+        if($isValid){
+            file_put_contents($modelPath, $modelTemplate);
+        }
+
         $this->info('Model generated!');
     }
 
@@ -203,9 +206,12 @@ class CrudGenerator extends Command
             mkdir($path, 0777, true);
 
         $controllerPath = app_path("/Http/Controllers{$this->adminFolder}/{$this->modelPascal}Controller.php");
-        $this->validatePath($controllerPath);
+        $isValid = $this->validatePath($controllerPath);
 
-        file_put_contents($controllerPath, $controllerTemplate);
+        if($isValid){
+            file_put_contents($controllerPath, $controllerTemplate);
+        }
+
         $this->info('Controller generated!');
     }
 
@@ -221,9 +227,12 @@ class CrudGenerator extends Command
             mkdir($path, 0777, true);
 
         $requestPath = app_path("/Http/Requests/{$this->modelPascal}Request.php");
-        $this->validatePath($requestPath);
+        $isValid = $this->validatePath($requestPath);
 
-        file_put_contents($requestPath, $requestTemplate);
+        if($isValid){
+            file_put_contents($requestPath, $requestTemplate);
+        }
+
         $this->info('Request generated!');
     }
 
@@ -249,13 +258,21 @@ class CrudGenerator extends Command
         $rtCreatePath = resource_path("views{$modelSnakeParent}/{$modellower}/create.blade.php");
         $rtEditPath = resource_path("views{$modelSnakeParent}/{$modellower}/edit.blade.php");
 
-        $this->validatePath($rtIndexPath);
-        $this->validatePath($rtCreatePath);
-        $this->validatePath($rtEditPath);
+        $isValid = $this->validatePath($rtIndexPath);
+        if($isValid){
+            file_put_contents($rtIndexPath, $rtIndex);
+        }
 
-        file_put_contents($rtIndexPath, $rtIndex);
-        file_put_contents($rtCreatePath, $rtCreate);
-        file_put_contents($rtEditPath, $rtEdit);
+        $isValid = $this->validatePath($rtCreatePath);
+        if($isValid){
+            file_put_contents($rtCreatePath, $rtCreate);
+        }
+        
+        $isValid = $this->validatePath($rtEditPath);
+        if($isValid){
+            file_put_contents($rtEditPath, $rtEdit);
+        }
+
         $this->info('View files generated!');
     }
 
@@ -291,9 +308,9 @@ class CrudGenerator extends Command
     {
         if ($this->finder->exists($path) === true) {
             $this->error("This $path already exists!");
-            return;
+            return false;
         }
-        return;
+        return true;
     }
 
     public function dynamicGetStubRoot($folderName, $fileName)
@@ -320,9 +337,12 @@ class CrudGenerator extends Command
             mkdir($path, 0777, true);
 
         $resourcePath = app_path("/Http/Resources/{$this->modelPascal}Resource.php");
-        $this->validatePath($resourcePath);
+        $isValid = $this->validatePath($resourcePath);
+        
+        if($isValid){
+            file_put_contents($resourcePath, $requestTemplate);
+        }
 
-        file_put_contents($resourcePath, $requestTemplate);
         $this->info('Api: Resource generated!');
     }
 
@@ -344,8 +364,12 @@ class CrudGenerator extends Command
             mkdir($path, 0777, true);
 
         $controllerPath = app_path("/Http/Controllers/Api{$this->adminFolder}/{$this->modelPascal}Controller.php");
-        $this->validatePath($controllerPath);
-        file_put_contents($controllerPath, $controllerTemplate);
+        $isValid = $this->validatePath($controllerPath);
+
+        if($isValid){
+            file_put_contents($controllerPath, $controllerTemplate);
+        }
+        
         $this->info('Api: Controller generated!');
 
         
