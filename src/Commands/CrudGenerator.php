@@ -291,7 +291,7 @@ class CrudGenerator extends Command
 
         //version check code : laravel 8 route needs whole controller path
         $adminFolderRoute = $this->adminCrud ? '\Admin' : '';
-        $controllerNamespace = app()->version() < 8 ? '' : "\App\Http\Controllers{$adminFolderRoute}";
+        $controllerNamespace = "\App\Http\Controllers{$adminFolderRoute}";
 
         $adminRouteGroupParams = "'namespace'=> '$controllerNamespace', 'prefix' => '{$this->adminPrefix}',  'as'=>'{$this->adminRoutePrefix}',";
 
@@ -388,7 +388,7 @@ class CrudGenerator extends Command
     protected function apiRoute()
     {
         $adminFolderRoute = $this->adminCrud ? '\Admin' : '';
-        $controllerNamespace = app()->version() < 8 ? '' : "\App\Http\Controllers\Api{$adminFolderRoute}";
+        $controllerNamespace = "\App\Http\Controllers\Api{$adminFolderRoute}";
 
         $adminRouteGroupParams = "'namespace'=> '$controllerNamespace', 'prefix' => '{$this->adminPrefix}',  'as'=>'{$this->adminRoutePrefix}',";
 
