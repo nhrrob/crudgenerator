@@ -78,6 +78,11 @@ class CrudGenerator extends Command
     {
         $this->name = $this->ask('Model Title');
 
+        if (empty($this->name)) {
+            $this->error("Model title is required!");
+            return;
+        }
+        
         //Generate Variables
         $this->modelTitle = $this->name;
         $this->adminCrud = $this->option('admin');
