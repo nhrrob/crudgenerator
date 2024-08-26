@@ -73,6 +73,11 @@ class CrudGeneratorDelete extends Command
     public function handle()
     {
         $this->name = $this->ask('Model Title');
+        
+        if (empty($this->name)) {
+            $this->error("Model title is required!");
+            return;
+        }
 
         //Generate Variables
         $this->modelTitle = $this->name;
