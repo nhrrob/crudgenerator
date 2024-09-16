@@ -39,6 +39,10 @@ class CrudGenerator extends Command
      *
      * @return void
      */
+    protected $api_version;
+    protected $api_auth;
+    protected $apiRouteMiddleware;
+    
     protected $version;
     protected $crudType;
     protected $name;
@@ -55,13 +59,17 @@ class CrudGenerator extends Command
     public function __construct(Filesystem $finder)
     {
         parent::__construct();
-        $this->version = 'v1'; //it may change but command should not change. conmmand should not contain v1 or etc
+        $this->api_version = config('crudgenerator.api_version') ?? '1';
+        $this->api_auth = config('crudgenerator.api_auth') ?? 'sanctum';
+        $this->apiRouteMiddleware = $this->api_auth === 'sanctum' ? 'sanctum' : 'api';
+        
+        $this->version = $this->api_version ? "v{$this->api_version}" : ''; //it may change but command should not change. conmmand should not contain v1 or etc
         $this->crudType = 'normal';
         $this->finder = $finder;
-        $this->modelFolder = app()->version() < 8 ? '' : '\Models';
+        $this->modelFolder = intval(app()->version()) < 8 ? '' : '\Models';
         $this->stubDirectoryPath = File::exists(resource_path('stubs/vendor/crudgenerator/'))
         ? resource_path('stubs/vendor/crudgenerator/')
-        : __DIR__ . '/../stubs/';
+        : __DIR__ . '/../../stubs/';
     }
 
     /**
@@ -162,7 +170,8 @@ class CrudGenerator extends Command
     protected function getStub($type, $isApi=0, $isApiAuthController = 0)
     {
         $apiFolder = $isApi ? '/Api' : '';
-        $parentFolder = $this->version . '/' . $this->crudType. $apiFolder;
+        // $parentFolder = $this->version . '/' . $this->crudType. $apiFolder;
+        $parentFolder = $apiFolder;
         
         $path = "{$this->stubDirectoryPath}$parentFolder/$type.stub";
         return file_get_contents($path);
@@ -170,7 +179,8 @@ class CrudGenerator extends Command
 
     protected function getViewStubRoot($folderName, $type)
     {
-        $parentFolder = $this->version . '/' . $this->crudType;
+        // $parentFolder = $this->version . '/' . $this->crudType;
+        $parentFolder = '';
 
         $path =  "{$this->stubDirectoryPath}$parentFolder/$folderName/$type.stub";
         return file_get_contents($path);
@@ -365,10 +375,13 @@ class CrudGenerator extends Command
             $this->getStub('AuthController', 1, 1)
         );
 
-        if (!file_exists($path = app_path("/Http/Controllers/Api{$this->adminFolder}")))
+        $apiVersion = ucfirst($this->version);
+        $apiVersion = ! empty($apiVersion) ? '/' . $apiVersion : '';
+
+        if (!file_exists($path = app_path("/Http/Controllers/Api{$apiVersion}{$this->adminFolder}")))
             mkdir($path, 0777, true);
 
-        $controllerPath = app_path("/Http/Controllers/Api{$this->adminFolder}/{$this->modelPascal}Controller.php");
+        $controllerPath = app_path("/Http/Controllers/Api{$apiVersion}{$this->adminFolder}/{$this->modelPascal}Controller.php");
         $isValid = $this->validatePath($controllerPath);
 
         if($isValid){
@@ -378,7 +391,7 @@ class CrudGenerator extends Command
         $this->info('Api: Controller generated!');
 
         
-        $authControllerPath = app_path("/Http/Controllers/Api/AuthController.php");
+        $authControllerPath = app_path("/Http/Controllers/Api{$apiVersion}/AuthController.php");
 
         if ($this->finder->exists($authControllerPath) === false) {
             file_put_contents($authControllerPath, $authControllerTemplate);
@@ -392,13 +405,17 @@ class CrudGenerator extends Command
 
     protected function apiRoute()
     {
+        $apiVersion = ucfirst($this->version);
+        $apiVersion = ! empty($apiVersion) ? '\\' . $apiVersion : '';
+        $apiVersionRoutePrefix = ! empty($this->version) ? $this->version . '/' : '';
+        
         $adminFolderRoute = $this->adminCrud ? '\Admin' : '';
-        $controllerNamespace = "\App\Http\Controllers\Api{$adminFolderRoute}";
+        $controllerNamespace = "\App\Http\Controllers\Api{$apiVersion}{$adminFolderRoute}";
 
-        $adminRouteGroupParams = "'namespace'=> '$controllerNamespace', 'prefix' => '{$this->adminPrefix}',  'as'=>'{$this->adminRoutePrefix}',";
+        $adminRouteGroupParams = "'namespace'=> '$controllerNamespace', 'prefix' => '{$apiVersionRoutePrefix}{$this->adminPrefix}',  'as'=>'{$this->version}.{$this->adminRoutePrefix}',";
 
         $path_to_file  = base_path('routes/api.php');
-        $append_route = "\n\n" . "Route::group([ {$adminRouteGroupParams} 'middleware' => ['auth:api']], function () { \n  Route::get('/{$this->modelKebabPlural}/search/{title}', '{$this->modelPascal}Controller@search')->name('{$this->modelKebabPlural}.search'); \n  Route::apiResource('$this->modelKebabPlural', '{$this->modelPascal}Controller'); \n});";
+        $append_route = "\n\n" . "Route::group([ {$adminRouteGroupParams} 'middleware' => ['auth:{$this->apiRouteMiddleware}']], function () { \n  Route::get('/{$this->modelKebabPlural}/search/{title}', '{$this->modelPascal}Controller@search')->name('{$this->modelKebabPlural}.search'); \n  Route::apiResource('$this->modelKebabPlural', '{$this->modelPascal}Controller'); \n});";
         File::append($path_to_file, $append_route);
 
         $this->info('Api: Route generated!');

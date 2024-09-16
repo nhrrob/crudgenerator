@@ -14,10 +14,10 @@ class CrudgeneratorServiceProvider extends ServiceProvider
         // $this->loadViewsFrom(__DIR__ . '/stubs', 'crudgenerator');
         // $this->loadMigrationsFrom(__DIR__ . '/database/migrations/');
 
-        // $this->mergeConfigFrom(
-        //     __DIR__ . '/../config/crudgenerator.php',
-        //     'crudgenerator'
-        // );
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/crudgenerator.php',
+            'crudgenerator'
+        );
 
         $this->publishes([
             __DIR__ . '/../config/crudgenerator.php' => config_path('crudgenerator.php'),
