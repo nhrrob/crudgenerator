@@ -43,7 +43,7 @@ class CrudGenerator extends Command
     protected $api_auth;
     protected $apiRouteMiddleware;
     
-    protected $version;
+    protected $version, $versionPascal;
     protected $crudType;
     protected $name;
     protected $adminCrud, $adminNamespace, $adminFolder, $adminPrefix, $adminRoutePrefix;
@@ -111,6 +111,8 @@ class CrudGenerator extends Command
         $this->modelSnake = Str::of($this->name)->snake();
         $this->modelSnakePlural = Str::of($this->name)->snake()->plural();
 
+        $this->versionPascal = ucfirst($this->version);
+
         $this->templateArr1 = [
             '{{modelTitle}}',
             '{{modelTitlePlural}}',
@@ -128,6 +130,7 @@ class CrudGenerator extends Command
             '{{adminNamespace}}',
             '{{adminPrefix}}',
             '{{adminRoutePrefix}}',
+            '{{versionPascal}}',
 
         ];
 
@@ -148,6 +151,7 @@ class CrudGenerator extends Command
             $this->adminNamespace,
             $this->adminPrefix,
             $this->adminRoutePrefix,
+            $this->versionPascal,
         ];
 
         $this->model();

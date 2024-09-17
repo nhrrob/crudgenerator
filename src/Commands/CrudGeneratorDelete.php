@@ -45,7 +45,7 @@ class CrudGeneratorDelete extends Command
     protected $version;
     protected $crudType;
     protected $name;
-    protected $adminCrud, $adminNamespace, $adminFolder;
+    protected $adminCrud, $adminNamespace, $adminFolder, $adminPrefix, $adminRoutePrefix;
 
     protected $parent;
     protected $child;
@@ -92,6 +92,8 @@ class CrudGeneratorDelete extends Command
         $this->adminCrud = $this->option('admin');
         $this->adminNamespace = $this->adminCrud ? '\Admin' : ''; //For namespace
         $this->adminFolder = $this->adminCrud ? '/Admin' : '';  //For path
+        $this->adminPrefix = $this->adminCrud ? 'admin' : '';  //For view name; also for blade files
+        $this->adminRoutePrefix = $this->adminCrud ? 'admin.' : '';
 
         $this->modelTitlePlural = Str::plural($this->name);
         $this->modelTitleLower = Str::of($this->name)->lower();
@@ -152,12 +154,13 @@ class CrudGeneratorDelete extends Command
 
         $this->controllerDelete();
         $this->viewDelete();
+        $this->migrationDelete();
 
         //Api
         $this->apiControllerDelete();
 
         $this->info('CRUD files successfully deleted. No worries!');
-        $this->info('Do not forget to delete your routes and migration file!');
+        $this->info('Do not forget to delete route related codes on web.php and api.php!');
     }
 
     protected function modelDelete()
@@ -208,14 +211,51 @@ class CrudGeneratorDelete extends Command
         $validated = $this->validatePath($path);
 
         if ( $validated ) {
-            $this->finder->delete($path);
-            $this->info('views deleted successfully!');
+            $this->finder->deleteDirectory($path);
+            $this->info("views deleted successfully!");
         }
+    }
+
+    protected function migrationDelete()
+    {
+        $migrationFileName = $this->getMigrationFileName();
+
+        if (empty($migrationFileName)) {
+            $this->error("Migration file not found!");
+            return false;
+        }
+
+        $path = database_path("migrations/{$migrationFileName}");
+
+        $validated = $this->validatePath($path);
+
+        if ($validated) {
+            $this->finder->delete($path);
+            $this->info("Migration file deleted successfully!");
+        }
+    }
+
+    protected function getMigrationFileName()
+    {
+        $files = File::files(database_path('migrations'));
+        foreach ($files as $file) {
+            if (strpos($file->getFilename(), "create_{$this->modelSnakePlural}_table") !== false) {
+                return $file->getFilename();
+            }
+        }
+
+        return false;
     }
 
     protected function validatePath($path)
     {
-        $this->protectCorePath($path);
+        $coreFile = $this->protectCorePath($path);
+        
+        if ($coreFile === true) {
+            // Core file found. So, invalid path!
+            return false;
+        }
+        
         if ($this->finder->exists($path) === false) {
             $this->error("This $path does not exist!");
             return false;
@@ -231,13 +271,14 @@ class CrudGeneratorDelete extends Command
             || $path == app_path('/Http/Controllers/')
             || $path == app_path('/Http/Requests/')
             || $path == resource_path('views/')
+            || $path == database_path('migrations/')
             // || $path == resource_path('views/backend/') //backend folder name: get it from config
 
         ) {
             $this->error("This $path is a core folder!");
-            return;
+            return true;
         }
-        return;
+        return false;
     }
 
     //Api
