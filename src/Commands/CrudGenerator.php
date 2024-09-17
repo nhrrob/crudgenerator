@@ -196,7 +196,7 @@ class CrudGenerator extends Command
         );
 
         //Version Check Code
-        $modelFolder = app()->version() < 8 ? '' : '/Models'; //laravel 8 uses Models folder
+        $modelFolder = intval(app()->version()) < 8 ? '' : '/Models'; //laravel 8 uses Models folder
 
         $modelPath = app_path("$modelFolder/{$this->modelPascal}.php");
         $isValid = $this->validatePath($modelPath);
