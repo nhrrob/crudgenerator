@@ -38,10 +38,14 @@ class CrudGeneratorDelete extends Command
      *
      * @return void
      */
-    protected $version;
+    protected $api_version;
+    protected $api_auth;
+    protected $apiRouteMiddleware;
+    
+    protected $version, $versionPascal;
     protected $crudType;
     protected $name;
-    protected $adminCrud, $adminNamespace, $adminFolder;
+    protected $adminCrud, $adminNamespace, $adminFolder, $adminPrefix, $adminRoutePrefix;
 
     protected $parent;
     protected $child;
@@ -55,7 +59,11 @@ class CrudGeneratorDelete extends Command
     public function __construct(Filesystem $finder)
     {
         parent::__construct();
-        $this->version = 'v1';
+        $this->api_version = config('crudgenerator.api_version') ?? '1';
+        $this->api_auth = config('crudgenerator.api_auth') ?? 'sanctum';
+        $this->apiRouteMiddleware = $this->api_auth === 'sanctum' ? 'sanctum' : 'api';
+
+        $this->version = $this->api_version ? "v{$this->api_version}" : ''; //it may change but command should not change. conmmand should not contain v1 or etc
         $this->crudType = 'normal';
         $this->finder = $finder;
     }
@@ -84,6 +92,8 @@ class CrudGeneratorDelete extends Command
         $this->adminCrud = $this->option('admin');
         $this->adminNamespace = $this->adminCrud ? '\Admin' : ''; //For namespace
         $this->adminFolder = $this->adminCrud ? '/Admin' : '';  //For path
+        $this->adminPrefix = $this->adminCrud ? 'admin' : '';  //For view name; also for blade files
+        $this->adminRoutePrefix = $this->adminCrud ? 'admin.' : '';
 
         $this->modelTitlePlural = Str::plural($this->name);
         $this->modelTitleLower = Str::of($this->name)->lower();
@@ -96,6 +106,9 @@ class CrudGeneratorDelete extends Command
         $this->modelKebabPlural = Str::of($this->name)->kebab()->plural();
         $this->modelSnake = Str::of($this->name)->snake();
         $this->modelSnakePlural = Str::of($this->name)->snake()->plural();
+
+        // $this->versionPascal = ucfirst($this->version);
+        $this->versionPascal = ! empty( $this->version ) ? "\\" . ucfirst($this->version) : '';
 
         $this->templateArr1 = [
             '{{modelTitle}}',
@@ -110,6 +123,7 @@ class CrudGeneratorDelete extends Command
             '{{modelKebabPlural}}',
             '{{modelSnake}}',
             '{{modelSnakePlural}}',
+            '{{versionPascal}}',
 
         ];
 
@@ -126,6 +140,7 @@ class CrudGeneratorDelete extends Command
             $this->modelKebabPlural,
             $this->modelSnake,
             $this->modelSnakePlural,
+            $this->versionPascal,
         ];
 
         if ($this->confirm("Are you sure you wish to delete $this->name crud?") === false) {
@@ -144,38 +159,51 @@ class CrudGeneratorDelete extends Command
 
         $this->controllerDelete();
         $this->viewDelete();
+        $this->migrationDelete();
 
         //Api
         $this->apiControllerDelete();
 
         $this->info('CRUD files successfully deleted. No worries!');
-        $this->info('Do not forget to delete your routes and migration file!');
+        $this->info('Do not forget to delete route related codes on web.php and api.php!');
     }
 
     protected function modelDelete()
     {
         //Version Check Code
-        $modelFolder = app()->version() < 8 ? '' : '/Models'; //laravel 8 uses Models folder
+        $modelFolder = intval(app()->version()) < 8 ? '' : '/Models'; //laravel 8 uses Models folder
         $path = app_path("$modelFolder/{$this->modelPascal}.php");
         
-        $this->validatePath($path);
-        $this->finder->delete($path);
+        $validated = $this->validatePath($path);
+
+        if ( $validated ) {
+            $this->finder->delete($path);
+            $this->info('Model deleted successfully!');
+        }
     }
 
     protected function controllerDelete()
     {
         $path = app_path("/Http/Controllers{$this->adminFolder}/{$this->modelPascal}Controller.php");
 
-        $this->validatePath($path);
-        $this->finder->delete($path);
+        $validated = $this->validatePath($path);
+
+        if ( $validated ) {
+            $this->finder->delete($path);
+            $this->info('Controller deleted successfully!');
+        }
     }
 
     protected function requestDelete()
     {
         $path = app_path("/Http/Requests/{$this->modelPascal}Request.php");
 
-        $this->validatePath($path);
-        $this->finder->delete($path);
+        $validated = $this->validatePath($path);
+
+        if ( $validated ) {
+            $this->finder->delete($path);
+            $this->info('Request deleted successfully!');
+        }
     }
 
     protected function viewDelete()
@@ -185,18 +213,59 @@ class CrudGeneratorDelete extends Command
         $modellower = strtolower($this->modelSnake);
         $path = resource_path("views{$modelSnakeParent}/{$modellower}"); //view/backend or admin folder: get it from config
 
-        $this->validatePath($path);
-        $this->finder->deleteDirectory($path);
+        $validated = $this->validatePath($path);
+
+        if ( $validated ) {
+            $this->finder->deleteDirectory($path);
+            $this->info("views deleted successfully!");
+        }
+    }
+
+    protected function migrationDelete()
+    {
+        $migrationFileName = $this->getMigrationFileName();
+
+        if (empty($migrationFileName)) {
+            $this->error("Migration file not found!");
+            return false;
+        }
+
+        $path = database_path("migrations/{$migrationFileName}");
+
+        $validated = $this->validatePath($path);
+
+        if ($validated) {
+            $this->finder->delete($path);
+            $this->info("Migration file deleted successfully!");
+        }
+    }
+
+    protected function getMigrationFileName()
+    {
+        $files = File::files(database_path('migrations'));
+        foreach ($files as $file) {
+            if (strpos($file->getFilename(), "create_{$this->modelSnakePlural}_table") !== false) {
+                return $file->getFilename();
+            }
+        }
+
+        return false;
     }
 
     protected function validatePath($path)
     {
-        $this->protectCorePath($path);
+        $coreFile = $this->protectCorePath($path);
+        
+        if ($coreFile === true) {
+            // Core file found. So, invalid path!
+            return false;
+        }
+        
         if ($this->finder->exists($path) === false) {
             $this->error("This $path does not exist!");
-            return;
+            return false;
         }
-        return;
+        return true;
     }
 
     protected function protectCorePath($path)
@@ -207,29 +276,42 @@ class CrudGeneratorDelete extends Command
             || $path == app_path('/Http/Controllers/')
             || $path == app_path('/Http/Requests/')
             || $path == resource_path('views/')
+            || $path == database_path('migrations/')
             // || $path == resource_path('views/backend/') //backend folder name: get it from config
 
         ) {
             $this->error("This $path is a core folder!");
-            return;
+            return true;
         }
-        return;
+        return false;
     }
 
     //Api
     protected function apiResourceDelete()
     {
-        $path = app_path("/Http/Resources/{$this->modelPascal}Resource.php");
+        $path = app_path("/Http/Resources{$this->versionPascal}/{$this->modelPascal}Resource.php");
 
-        $this->validatePath($path);
-        $this->finder->delete($path);
+        $validated = $this->validatePath($path);
+        
+        if ( $validated ) {
+            $this->finder->delete($path);
+            $this->info('Api Resource deleted successfully!');
+        }
     }
 
     protected function apiControllerDelete()
     {
-        $path = app_path("/Http/Controllers/Api{$this->adminFolder}/{$this->modelPascal}Controller.php");
+        $apiVersion = ucfirst($this->version);
+        $apiVersion = ! empty($apiVersion) ? '/' . $apiVersion : '';
 
-        $this->validatePath($path);
-        $this->finder->delete($path);
+        $path = app_path("/Http/Controllers/Api{$apiVersion}{$this->adminFolder}/{$this->modelPascal}Controller.php");
+
+        $validated = $this->validatePath($path);
+
+        if ( $validated ) {
+            $this->finder->delete($path);
+            $this->info('Api Controller deleted successfully!');
+        }
+
     }
 }
