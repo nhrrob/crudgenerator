@@ -355,7 +355,7 @@ class CrudGenerator extends Command
         if (!file_exists($path = app_path('/Http/Resources')))
             mkdir($path, 0777, true);
 
-        $resourcePath = app_path("/Http/Resources/{$this->modelPascal}Resource.php");
+        $resourcePath = app_path("/Http/Resources/{$this->versionPascal}/{$this->modelPascal}Resource.php");
         $isValid = $this->validatePath($resourcePath);
         
         if($isValid){

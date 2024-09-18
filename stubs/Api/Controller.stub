@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api{{adminNamespace}};
+namespace App\Http\Controllers\Api{{adminNamespace}}\{{versionPascal}};
 
 use App\Http\Controllers\Controller;
 use App{{modelFolder}}\{{modelPascal}};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\{{modelPascal}}Resource;
+use App\Http\Resources\{{versionPascal}}\{{modelPascal}}Resource;
 
 class {{modelPascal}}Controller extends Controller
 {

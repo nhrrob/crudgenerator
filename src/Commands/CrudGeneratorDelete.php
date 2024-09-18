@@ -42,7 +42,7 @@ class CrudGeneratorDelete extends Command
     protected $api_auth;
     protected $apiRouteMiddleware;
     
-    protected $version;
+    protected $version, $versionPascal;
     protected $crudType;
     protected $name;
     protected $adminCrud, $adminNamespace, $adminFolder, $adminPrefix, $adminRoutePrefix;
@@ -107,6 +107,8 @@ class CrudGeneratorDelete extends Command
         $this->modelSnake = Str::of($this->name)->snake();
         $this->modelSnakePlural = Str::of($this->name)->snake()->plural();
 
+        $this->versionPascal = ucfirst($this->version);
+
         $this->templateArr1 = [
             '{{modelTitle}}',
             '{{modelTitlePlural}}',
@@ -120,6 +122,7 @@ class CrudGeneratorDelete extends Command
             '{{modelKebabPlural}}',
             '{{modelSnake}}',
             '{{modelSnakePlural}}',
+            '{{versionPascal}}',
 
         ];
 
@@ -136,6 +139,7 @@ class CrudGeneratorDelete extends Command
             $this->modelKebabPlural,
             $this->modelSnake,
             $this->modelSnakePlural,
+            $this->versionPascal,
         ];
 
         if ($this->confirm("Are you sure you wish to delete $this->name crud?") === false) {
@@ -284,7 +288,7 @@ class CrudGeneratorDelete extends Command
     //Api
     protected function apiResourceDelete()
     {
-        $path = app_path("/Http/Resources/{$this->modelPascal}Resource.php");
+        $path = app_path("/Http/Resources/{$this->versionPascal}/{$this->modelPascal}Resource.php");
 
         $validated = $this->validatePath($path);
         
