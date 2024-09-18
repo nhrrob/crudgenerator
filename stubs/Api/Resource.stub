@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\{{versionPascal}};
+namespace App\Http\Resources{{versionPascal}};
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,7 +23,7 @@ class {{modelPascal}}Resource extends JsonResource
 
     public function with($request){
         return [
-            'version' => '1.0.0',
+            'version' => "{{versionNumber}}",
             'author_url' => url('https://www.nazmulrobin.com'),
         ];
     }

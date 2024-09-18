@@ -43,6 +43,6 @@ return [
     | and parent folder:    V1 (e.x. app/Http/Controllers/Api/V1) 
     */
 
-    'api_version' => 3, // 0 indicates no versioning. Example: 1 or 2 or 3 etc
+    'api_version' => 1, // 0 indicates no versioning. Example: 1 or 2 or 3 etc
 
 ];

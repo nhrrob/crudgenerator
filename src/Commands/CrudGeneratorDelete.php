@@ -107,7 +107,8 @@ class CrudGeneratorDelete extends Command
         $this->modelSnake = Str::of($this->name)->snake();
         $this->modelSnakePlural = Str::of($this->name)->snake()->plural();
 
-        $this->versionPascal = ucfirst($this->version);
+        // $this->versionPascal = ucfirst($this->version);
+        $this->versionPascal = ! empty( $this->version ) ? "\\" . ucfirst($this->version) : '';
 
         $this->templateArr1 = [
             '{{modelTitle}}',
@@ -288,7 +289,7 @@ class CrudGeneratorDelete extends Command
     //Api
     protected function apiResourceDelete()
     {
-        $path = app_path("/Http/Resources/{$this->versionPascal}/{$this->modelPascal}Resource.php");
+        $path = app_path("/Http/Resources{$this->versionPascal}/{$this->modelPascal}Resource.php");
 
         $validated = $this->validatePath($path);
         

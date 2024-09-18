@@ -43,7 +43,7 @@ class CrudGenerator extends Command
     protected $api_auth;
     protected $apiRouteMiddleware;
     
-    protected $version, $versionPascal;
+    protected $version, $versionNumber, $versionPascal;
     protected $crudType;
     protected $name;
     protected $adminCrud, $adminNamespace, $adminFolder, $adminPrefix, $adminRoutePrefix;
@@ -111,7 +111,9 @@ class CrudGenerator extends Command
         $this->modelSnake = Str::of($this->name)->snake();
         $this->modelSnakePlural = Str::of($this->name)->snake()->plural();
 
-        $this->versionPascal = ucfirst($this->version);
+        // $this->versionPascal = ucfirst($this->version);
+        $this->versionPascal = ! empty( $this->version ) ? "\\" . ucfirst($this->version) : '';
+        $this->versionNumber = $this->api_version ? floatval($this->api_version) : '1.0.0';
 
         $this->templateArr1 = [
             '{{modelTitle}}',
@@ -131,6 +133,7 @@ class CrudGenerator extends Command
             '{{adminPrefix}}',
             '{{adminRoutePrefix}}',
             '{{versionPascal}}',
+            '{{versionNumber}}',
 
         ];
 
@@ -152,6 +155,7 @@ class CrudGenerator extends Command
             $this->adminPrefix,
             $this->adminRoutePrefix,
             $this->versionPascal,
+            $this->versionNumber,
         ];
 
         $this->model();
@@ -297,11 +301,30 @@ class CrudGenerator extends Command
 
     protected function migration()
     {
+        $migrationFileName = $this->getMigrationFileName();
+
+        if (!empty($migrationFileName)) {
+            $this->error("Migration file exists!");
+            return false;
+        }
+        
         try{
             Artisan::call('make:migration create_' . strtolower(Str::plural($this->modelSnake)) . '_table --create=' . strtolower(Str::plural($this->modelSnake)));
         }catch(Exception $e){
             $this->info($e->getMessage());
         }
+    }
+
+    protected function getMigrationFileName()
+    {
+        $files = File::files(database_path('migrations'));
+        foreach ($files as $file) {
+            if (strpos($file->getFilename(), "create_{$this->modelSnakePlural}_table") !== false) {
+                return $file->getFilename();
+            }
+        }
+
+        return false;
     }
 
     protected function route()
@@ -352,8 +375,10 @@ class CrudGenerator extends Command
             $this->getStub('Resource', 1)
         );
 
-        if (!file_exists($path = app_path('/Http/Resources')))
-            mkdir($path, 0777, true);
+        $versionPascal = ! empty( $this->versionPascal ) ? $this->versionPascal . '/' : '';
+        if (!file_exists($path = app_path("/Http/Resources/$versionPascal"))){
+            $result = mkdir($path, 0777, true);
+        }
 
         $resourcePath = app_path("/Http/Resources/{$this->versionPascal}/{$this->modelPascal}Resource.php");
         $isValid = $this->validatePath($resourcePath);
