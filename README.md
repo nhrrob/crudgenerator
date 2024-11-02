@@ -46,7 +46,7 @@ php artisan crud:generator --admin
    Example:
    - Model title: Post
    - Resource route: example.com/posts 
-- If you want to use Api, make sure Sanctum(or, Passport) is installed.
+- If you want to use Api, make sure Sanctum (or, Passport) is installed.
    <br>Link: <a href="https://github.com/nhrrob/laravelwiki">https://github.com/nhrrob/laravelwiki</a> 
 
 ## 
