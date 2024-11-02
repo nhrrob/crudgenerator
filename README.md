@@ -138,4 +138,4 @@ app/Http/Controllers/Api/Admin
 - Api versioning support added
 - Api versions will be managed in dedicated version folder (e.x. app/Http/Controllers/Api/V1 and app/Http/Controllers/Api/V1/Admin)
 - Now delete command will also delete migration file. You dont need to manually remove it.
-- API AuthController will be added under versioning folder. (Probably).
+- API AuthController will be added under versioning folder. (Probably - https://github.com/nhrrob/laravel-11-api-crud/tree/master/app/Http/Controllers/Api/V1/Admin has no auth under versioning. But I am adding auth under versioning for get started project. Also crud generator creates under versioning folder).
